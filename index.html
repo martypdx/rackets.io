@@ -8,13 +8,13 @@
 			.input { background: #000; padding: 3px; position: absolute; bottom: 0; left: 0; right: 0; }
 			.input input { border: 0; padding: 10px; width: 100%; }
 			.input button { position: absolute; right: 3px; top: 3px; bottom: 3px; background: rgb(130, 224, 255); border: none; padding: 10px; }
-			#messages { position: absolute; top: 0; bottom: 50px; right: 0; left: 0; list-style-type: none; margin: 0; padding: 0; overflow-y:auto;}
+			#messages { position: absolute; top: 0; bottom: 50px; right: 0; left: 0; list-style-type: none; margin: 0; padding: 0; overflow-y: auto;}
 			#messages li { padding: 5px 10px; }
 			#messages li:nth-child(odd) { background: #eee; }
 			#chat {
 				position: absolute;
-				top: 0; left: 50%;
-				right: 0; bottom: 0;
+				top: 0; bottom: 0;
+				left: 20%; right: 20%;
 				border: 1px solid #aaa;
 			}
 			.when {
@@ -38,7 +38,7 @@
 		</script>
 
 		<script id='message' type='text/ractive'>
-			<li>
+			<li intro='fade'>
 				<div>{{message}}</div>
 				<div class='when'>{{when}}</div>
 			</li>
@@ -46,6 +46,7 @@
 
 		<script src="/socket.io/socket.io.js"></script>
 		<script src="http://cdn.ractivejs.org/edge/ractive.min.js"></script>
+		<script src="https://rawgit.com/ractivejs/ractive-transitions-fade/master/ractive-transitions-fade.js"></script>
 		<script src="https://rawgit.com/zachleat/Humane-Dates/master/humane.js"></script>
 		<script>
 
@@ -86,25 +87,25 @@
 						e.node.value = ''
 					})
 
-					function add(message){
-						chat.get('messages').push(message)
+					function add(m){
+						chat.get('messages').push(m)
 					}
 
 					this.observe('messages.*', function(m){
-						if(recieving) { return }
+						if(recieving) { return; }
+
 						socket.emit('chat message', m)
 					})
 
 					socket.on('messages', function(messages){
-
 						recieving = true;
 						chat.set('messages', messages)
 						recieving = false;
 					})
 
-					socket.on('chat message', function(msg){
+					socket.on('chat message', function(m){
 						recieving = true
-						add(msg)
+						add(m)
 						recieving = false
 					})
 
